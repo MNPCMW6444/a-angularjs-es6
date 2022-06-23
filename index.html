@@ -4,36 +4,53 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <script>
       var app = angular.module("myApp", []);
-      app.controller("myCtrl", function ($scope) {
-        $scope.inMeters = 0;
-        $scope.inFeets = 0;
-        $scope.set = function () {
-          $scope.inFeets = $scope.inMeters / 0.3048;
-        };
-        $scope.setFromFeets = function () {
-          $scope.inMeters = $scope.inFeets * 0.3048;
+      app.controller("MyTrainingController", function ($scope, $attrs) {
+        $scope.myModelVariable = 10;
+        console.log($attrs.text);
+      });
+
+      app.filter("convertToMeters", function () {
+        return function (inFeets) {
+          return inFeets * 0.3048;
         };
       });
+      /*  var module = angular
+        .module("testApp", [])
+        .directive("testcomponent", function () {
+          return {
+            restrict: "E",
+            template: "<div><p>{{text}} This will run fine! </p></div>",
+            scope: {
+              text: "@text",
+            },
+            controller: function ($scope, $element, $attrs) {
+              $scope.text = $attrs.text;
+              console.log($scope.text); // this will return undefined
+              setTimeout(function () {
+                console.log($scope.text); // this will return the actual value...
+              }, 1000);
+            },
+          };
+        }); */
     </script>
   </head>
-  <body data-ng-app="myApp">
-    <!--  <div>
-      <p>Enter the length in meters: <input type="text" data-ng-model="length" /></p>
-      <p>The length in feats is {{length}}</p>
-    </div>
-    <div data-ng-controller="myCtrl">
-      First Name: <input type="text" data-ng-model="firstName" /><br />
-      Last Name: <input type="text" data-ng-model="lastName" /><br />
-      <br />
-      Full Name: {{firstName + " " + lastName}}
-    </div> -->
-    <div data-ng-app="myApp" data-ng-controller="myCtrl">
-      <label>Length in meters: </label>
-      <input type="number" ng-change="set()" data-ng-model="inMeters" />
-      <br />
-      <br />
-      <label>Length in feets: </label>
-      <input type="number" ng-change="setFromFeets()" data-ng-model="inFeets" />
+  <body ng-app="myApp">
+    <div ng-controller="MyTrainingController" text="qwdqw">
+      <input
+        type="text"
+        ng-model="myModelVariable"
+        ng-model-options="{ updateOn: 'blur' }"
+        min-val="-500"
+        max-val="200"
+        allowed-chars="[0-9\-\.]"
+        display-filter="convertToMeters"
+        model-filter="convertToFeets"
+        to-fixed="2"
+      />
+      <div>{{myModelVariable}}</div>
     </div>
   </body>
 </html>
+<!-- <body ng-app="testApp">
+    <testcomponent text="hello!"></testcomponent>
+  </body> -->
