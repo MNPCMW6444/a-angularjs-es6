@@ -1,56 +1,44 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
   <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <script>
-      var app = angular.module("myApp", []);
-      app.controller("MyTrainingController", function ($scope, $attrs) {
-        $scope.myModelVariable = 10;
-        console.log($attrs.text);
-      });
+    <meta charset="UTF-8" />
+    <title>Example - example-forms-async-validation-production</title>
 
-      app.filter("convertToMeters", function () {
-        return function (inFeets) {
-          return inFeets * 0.3048;
-        };
-      });
-      /*  var module = angular
-        .module("testApp", [])
-        .directive("testcomponent", function () {
-          return {
-            restrict: "E",
-            template: "<div><p>{{text}} This will run fine! </p></div>",
-            scope: {
-              text: "@text",
-            },
-            controller: function ($scope, $element, $attrs) {
-              $scope.text = $attrs.text;
-              console.log($scope.text); // this will return undefined
-              setTimeout(function () {
-                console.log($scope.text); // this will return the actual value...
-              }, 1000);
-            },
-          };
-        }); */
-    </script>
+    <script src="//code.angularjs.org/snapshot/angular.min.js"></script>
+    <script src="index.js"></script>
   </head>
-  <body ng-app="myApp">
-    <div ng-controller="MyTrainingController" text="qwdqw">
-      <input
-        type="text"
-        ng-model="myModelVariable"
-        ng-model-options="{ updateOn: 'blur' }"
-        min-val="-500"
-        max-val="200"
-        allowed-chars="[0-9\-\.]"
-        display-filter="convertToMeters"
-        model-filter="convertToFeets"
-        to-fixed="2"
-      />
-      <div>{{myModelVariable}}</div>
-    </div>
+  <body ng-app="form-example1">
+    <form name="form" class="css-form" novalidate>
+      <div>
+        <label>
+          Enter length in Feet: (-500 - 200):
+          <input
+            type="text"
+            ng-model="myModelVariable"
+            name="myModelVariable"
+            min-val="-500"
+            max-val="200"
+            allowed-chars="[0-9\-\-.]"
+            to-fixed="2"
+            integer
+          />
+          {{myModelVariable}} </label
+        ><br />
+        <span ng-show="form.myModelVariable.$error.integer"
+          >The value is not a valid input!</span
+        >
+        <span
+          ng-show="form.myModelVariable.$error.min || form.myModelVariable.$error.max"
+        >
+          The value must be in range -200 to 500!</span
+        >
+      </div>
+    </form>
   </body>
 </html>
-<!-- <body ng-app="testApp">
-    <testcomponent text="hello!"></testcomponent>
-  </body> -->
+
+<!-- 
+Copyright 2022 Google LLC. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at http://angular.io/license
+-->
