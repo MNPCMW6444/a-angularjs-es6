@@ -2,27 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Example - example-forms-async-validation-production</title>
-
+    <title>Michael's AngularJS Project</title>
     <script src="//code.angularjs.org/snapshot/angular.min.js"></script>
     <script src="index.js"></script>
   </head>
-  <body ng-app="form-example1">
+  <body ng-app="myApp">
     <form name="form" class="css-form" novalidate>
-      <div>
+      <div ng-controller="MyTrainingController">
         <label>
-          Enter length in Feet: (-500 - 200):
+          Enter length in Feet:
           <input
             type="text"
             ng-model="myModelVariable"
-            name="myModelVariable"
             min-val="-500"
             max-val="200"
             allowed-chars="[0-9\-\-.]"
             to-fixed="2"
             integer
           />
-          {{myModelVariable}} </label
+          {{myModelVariable | convertToMeters:myModelVariable}} </label
         ><br />
         <span ng-show="form.myModelVariable.$error.integer"
           >The value is not a valid input!</span
@@ -36,9 +34,3 @@
     </form>
   </body>
 </html>
-
-<!-- 
-Copyright 2022 Google LLC. All Rights Reserved.
-Use of this source code is governed by an MIT-style license that
-can be found in the LICENSE file at http://angular.io/license
--->
