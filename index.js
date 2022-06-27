@@ -1,7 +1,17 @@
 let app = angular.module("myApp", []);
 app.constant("CONVERSION_KEY", 3.24);
-app.controller("MyTrainingController", function ($scope) {
+app.controller("MyTrainingController", function ($scope, $interval) {
   $scope.myModelVariable = 10;
+
+  const inter = $interval(function () {
+    $scope.myModelVariable = Math.random();
+  }, 1000);
+
+  $scope.stop = () => $interval.cancel(inter);
+  $scope.continue = () =>
+    $interval(function () {
+      $scope.myModelVariable = Math.random();
+    }, 1000);
 });
 app.directive("minVal", function () {
   return {
