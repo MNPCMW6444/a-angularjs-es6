@@ -7,30 +7,44 @@
     <script src="index.js"></script>
   </head>
   <body ng-app="myApp">
-    <form name="form" class="css-form" novalidate>
-      <div ng-controller="MyTrainingController">
-        <label>
-          Enter length in Feet:
-          <input
-            type="text"
-            ng-model="myModelVariable"
-            min-val="-500"
-            max-val="200"
-            allowed-chars="[0-9\-\-.]"
-            to-fixed="2"
-            integer
-          />
-          {{myModelVariable | convertToMeters:myModelVariable}} </label
-        ><br />
-        <span ng-show="form.myModelVariable.$error.integer"
-          >The value is not a valid input!</span
+    <div ng-controller="MyTrainingController">
+      <form name="myForm" novalidate>
+        <label> Enter length in Feet: </label>
+        <input
+          type="text"
+          name="myModelVariable"
+          ng-model="myModelVariable"
+          min-val="-500"
+          max-val="200"
+          allowed-chars="[0-9\-\-.]"
+          display-filter="convertToMeters"
+          model-filter="convertToFeets"
+          to-fixed="2"
+        />
+        <br />
+        <label>The length in Meters is: </label>
+        {{myModelVariable|| myModelVariable===0?myModelVariable:"Invalid Input"
+        }}
+        <br />
+        <span ng-show="myForm.myModelVariable.$error.maxVal" style="color: red"
+          >The value can not be more than 200!</span
+        >
+        <span ng-show="myForm.myModelVariable.$error.minVal" style="color: red"
+          >The value can not be less than -500!</span
         >
         <span
-          ng-show="form.myModelVariable.$error.min || form.myModelVariable.$error.max"
+          ng-show="myForm.myModelVariable.$error.allowedChars"
+          style="color: red"
+          >The value can not contain letters!</span
         >
-          The value must be in range -200 to 500!</span
+        <span
+          ng-show="myForm.myModelVariable.$error.      toFixed
+      "
+          style="color: red"
+          >The value can not contain more than 2 digits after the decimal
+          point!</span
         >
-      </div>
-    </form>
+      </form>
+    </div>
   </body>
 </html>
