@@ -20,10 +20,10 @@
           display-filter="convertToMeters"
           model-filter="convertToFeets"
           to-fixed="2"
-          ng-focus="stop()"
-          ng-blur="continue()"
+          handle-focus-and-blur
         />
         <br />
+
         <label>The length in Meters is: </label>
         {{myModelVariable|| myModelVariable===0?myModelVariable:"Invalid Input"
         }}

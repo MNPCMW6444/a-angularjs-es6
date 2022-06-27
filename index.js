@@ -2,16 +2,9 @@ let app = angular.module("myApp", []);
 app.constant("CONVERSION_KEY", 3.24);
 app.controller("MyTrainingController", function ($scope, $interval) {
   $scope.myModelVariable = 10;
-
-  const inter = $interval(function () {
+  $scope.promise = $interval(function () {
     $scope.myModelVariable = Math.random();
   }, 1000);
-
-  $scope.stop = () => $interval.cancel(inter);
-  $scope.continue = () =>
-    $interval(function () {
-      $scope.myModelVariable = Math.random();
-    }, 1000);
 });
 app.directive("minVal", function () {
   return {
@@ -92,6 +85,20 @@ app.directive("toFixed", function () {
           return true;
         return false;
       };
+    },
+  };
+});
+app.directive("handleFocusAndBlur", function ($interval) {
+  return {
+    link: function (scope, element, attrs) {
+      element.bind("focus", function () {
+        $interval.cancel(scope.promise);
+      });
+      element.bind("blur", function () {
+        scope.promise = $interval(function () {
+          scope.myModelVariable = Math.random();
+        }, 1000);
+      });
     },
   };
 });
