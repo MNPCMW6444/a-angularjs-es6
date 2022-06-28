@@ -53,8 +53,8 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       scope.isConversionToMeters = attrs.displayFilter === "convertToMeters";
-      if (scope.isConversionToMeters)
-        scope.$watch("myModelVariable", function (newValue, oldValue) {
+      scope.$watch("myModelVariable", function (newValue, oldValue) {
+        if (scope.isConversionToMeters) {
           scope.myModelVariable = Math.round(scope.myModelVariable * 100) / 100;
           if (!scope.conversionKey) scope.conversionKey = INIT_CONVERSION_KEY;
           scope.conLabel1 = scope.isConversionToMeters ? "Meters" : "Feets";
@@ -64,9 +64,7 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
             scope.myViewVariable =
               Math.round(scope.myModelVariable * scope.conversionKey * 100) /
               100;
-        });
-      else
-        scope.$watch("myModelVariable", function (newValue, oldValue) {
+        } else {
           scope.myModelVariable = Math.round(scope.myModelVariable * 100) / 100;
           if (!scope.conversionKey)
             scope.conversionKey = 1 / INIT_CONVERSION_KEY;
@@ -77,28 +75,12 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
             scope.myViewVariable =
               Math.round(scope.myModelVariable * scope.conversionKey * 100) /
               100;
-        });
-      /*   function parseViewValue(modelValue) {
-        conKey = scope.conversionKey || INIT_CONVERSION_KEY;
-        scope.myViewVariable =
-          Math.round(parseFloat(modelValue) * conKey * 100) / 100;
-        return scope.myViewVariable;
-      }
-      ctrl.$parsers.push(parseViewValue); */
+        }
+      });
     },
   };
 });
-/* app.directive("modelFilter", function () {
-  return {
-    require: "ngModel",
-    link: function (scope, elm, attrs, ctrl) {
-      function formatModelValue(viewValue) {
-        return viewValue;
-      }
-      ctrl.$formatters.push(formatModelValue);
-    },
-  };
-}); */
+
 app.directive("toFixed", function () {
   return {
     require: "ngModel",
@@ -139,6 +121,8 @@ app.directive("handleFocusAndBlur", function ($interval) {
       element.bind("blur", function () {
         scope.promise = $interval(function () {
           scope.myModelVariable = Math.random();
+          scope.dontConvertToM = true;
+          scope.dontConvertToF = true;
         }, 1000);
       });
     },
