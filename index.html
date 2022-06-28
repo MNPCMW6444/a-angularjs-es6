@@ -27,17 +27,8 @@
         />
         <br />
         <br />
-        <label
-          >The length in {{conLabel1==="Meters"||conLabel1==="Feets"?
-          conLabel1:"Meters"}} is:
-        </label>
-        {{(myForm.myModelVariable.$error.maxVal
-        ||myForm.myModelVariable.$error.minVal
-        ||myForm.myModelVariable.$error.toFixed
-        ||myForm.myModelVariable.$error.allowedChar) ? "Invalid Input" :
-        myViewVariable||
-        ((myViewVariable===0)?myViewVariable:(myModelVariable?myModelVariable*0.304:"Invalid
-        Input"))}}
+        <label>The length in {{conLabel1}} is: </label>
+        {{myViewVariable || "Invalid Value"}}
         <br />
         <br />
 

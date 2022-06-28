@@ -49,17 +49,41 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
-      function parseViewValue(modelValue) {
+      scope.isConversionToMeters = attrs.displayFilter === "convertToMeters";
+      if (scope.isConversionToMeters)
+        scope.$watch("myModelVariable", function (newValue, oldValue) {
+          if (!scope.conversionKey) scope.conversionKey = INIT_CONVERSION_KEY;
+          scope.conLabel1 = scope.isConversionToMeters ? "Meters" : "Feets";
+          scope.conLabel2 = scope.isConversionToMeters ? "Feets" : "Meters";
+          if (scope.dontConvertToM) scope.dontConvertToM = false;
+          else
+            scope.myViewVariable =
+              Math.round(scope.myModelVariable * scope.conversionKey * 100) /
+              100;
+        });
+      else
+        scope.$watch("myModelVariable", function (newValue, oldValue) {
+          if (!scope.conversionKey)
+            scope.conversionKey = 1 / INIT_CONVERSION_KEY;
+          scope.conLabel1 = scope.isConversionToMeters ? "Feets" : "Meters";
+          scope.conLabel2 = scope.isConversionToMeters ? "Meters" : "Feets";
+          if (scope.dontConvertToF) scope.dontConvertToF = false;
+          else
+            scope.myViewVariable =
+              Math.round(scope.myModelVariable * scope.conversionKey * 100) /
+              100;
+        });
+      /*   function parseViewValue(modelValue) {
         conKey = scope.conversionKey || INIT_CONVERSION_KEY;
         scope.myViewVariable =
           Math.round(parseFloat(modelValue) * conKey * 100) / 100;
         return scope.myViewVariable;
       }
-      ctrl.$parsers.push(parseViewValue);
+      ctrl.$parsers.push(parseViewValue); */
     },
   };
 });
-app.directive("modelFilter", function () {
+/* app.directive("modelFilter", function () {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
@@ -69,7 +93,7 @@ app.directive("modelFilter", function () {
       ctrl.$formatters.push(formatModelValue);
     },
   };
-});
+}); */
 app.directive("toFixed", function () {
   return {
     require: "ngModel",
@@ -85,22 +109,18 @@ app.directive("toFixed", function () {
     },
   };
 });
-app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
+app.directive("switchConversion", function () {
   return {
     restrict: "A",
     link: function (scope, ele, attr) {
       const event = "click";
       ele.on(event, function () {
-        if (scope.conversionKey) {
-          scope.conversionKey = 1 / scope.conversionKey;
-        } else scope.conversionKey = INIT_CONVERSION_KEY;
-        scope.conLabel1 =
-          scope.conversionKey !== INIT_CONVERSION_KEY ? "Feets" : "Meters";
-        scope.conLabel2 =
-          scope.conversionKey === INIT_CONVERSION_KEY ? "Feets" : "Meters";
+        scope.isConversionToMeters = !scope.isConversionToMeters;
         const modelVal = scope.myModelVariable;
         scope.myModelVariable = scope.myViewVariable;
         scope.myViewVariable = modelVal;
+        scope.dontConvertToM = true;
+        scope.dontConvertToF = true;
       });
     },
   };
