@@ -1,5 +1,5 @@
 let app = angular.module("myApp", []);
-app.constant("CONVERSION_KEY", 3.24);
+app.constant("CONVERSION_KEY", 0.3048);
 app.controller("MyTrainingController", function ($scope) {
   $scope.myModelVariable = 10;
 });
@@ -8,13 +8,11 @@ app.directive("minVal", function () {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.minVal = function (modelValue, viewValue) {
-        if (
+        return (
           !viewValue ||
           viewValue === "-" ||
           parseFloat(viewValue) >= parseFloat(attrs.minVal)
-        )
-          return true;
-        return false;
+        );
       };
     },
   };
@@ -24,16 +22,11 @@ app.directive("maxVal", function () {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.maxVal = function (modelValue, viewValue) {
-        if (
+        return (
           !viewValue ||
           viewValue === "-" ||
           parseFloat(viewValue) <= parseFloat(attrs.maxVal)
-        ) {
-          elm["0"].style.color = "black";
-          return true;
-        }
-        elm["0"].style.color = "red";
-        return false;
+        );
       };
     },
   };
@@ -43,28 +36,34 @@ app.directive("allowedChars", function () {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.allowedChars = function (modelValue, viewValue) {
-        if (
+        return (
           !viewValue ||
           viewValue === "-" ||
           new RegExp(attrs.allowedChars).test(viewValue)
-        ) {
-          elm["0"].style.color = "black";
-          return true;
-        }
-        elm["0"].style.color = "red";
-        return false;
+        );
       };
     },
   };
 });
-app.directive("displayFilter", function (CONVERSION_KEY) {
+app.directive("displayFilter", function ($parse, CONVERSION_KEY) {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       function parseViewValue(modelValue) {
-        return Math.round((modelValue / CONVERSION_KEY) * 100) / 100;
+        return Math.round(modelValue * CONVERSION_KEY * 100) / 100;
       }
       ctrl.$parsers.push(parseViewValue);
+    },
+  };
+});
+app.directive("modelFilter", function (CONVERSION_KEY) {
+  return {
+    require: "ngModel",
+    link: function (scope, elm, attrs, ctrl) {
+      function formatModelValue(viewValue) {
+        return viewValue;
+      }
+      ctrl.$formatters.push(formatModelValue);
     },
   };
 });
@@ -73,14 +72,12 @@ app.directive("toFixed", function () {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.toFixed = function (modelValue, viewValue) {
-        if (
+        return (
           !viewValue ||
           viewValue === "-" ||
           !viewValue.includes(".") ||
           viewValue.split(".")[1].length <= attrs.toFixed
-        )
-          return true;
-        return false;
+        );
       };
     },
   };
