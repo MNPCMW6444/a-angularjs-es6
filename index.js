@@ -1,10 +1,7 @@
 let app = angular.module("myApp", []);
 app.constant("INIT_CONVERSION_KEY", 0.304);
-app.controller("MyTrainingController", function ($scope, $interval) {
+app.controller("MyTrainingController", function ($scope) {
   $scope.myModelVariable = 10;
-  $scope.promise = $interval(function () {
-    $scope.myModelVariable = Math.random();
-  }, 1000);
 });
 app.directive("minVal", function () {
   return {
@@ -53,9 +50,14 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       scope.isConversionToMeters = attrs.displayFilter === "convertToMeters";
+<<<<<<< HEAD
       scope.$watch("myModelVariable", function (newValue, oldValue) {
         if (scope.isConversionToMeters) {
           scope.myModelVariable = Math.round(scope.myModelVariable * 100) / 100;
+=======
+      if (scope.isConversionToMeters)
+        scope.$watch("myModelVariable", function (newValue, oldValue) {
+>>>>>>> parent of 9332aa5 (k)
           if (!scope.conversionKey) scope.conversionKey = INIT_CONVERSION_KEY;
           scope.conLabel1 = scope.isConversionToMeters ? "Meters" : "Feets";
           scope.conLabel2 = scope.isConversionToMeters ? "Feets" : "Meters";
@@ -64,8 +66,14 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
             scope.myViewVariable =
               Math.round(scope.myModelVariable * scope.conversionKey * 100) /
               100;
+<<<<<<< HEAD
         } else {
           scope.myModelVariable = Math.round(scope.myModelVariable * 100) / 100;
+=======
+        });
+      else
+        scope.$watch("myModelVariable", function (newValue, oldValue) {
+>>>>>>> parent of 9332aa5 (k)
           if (!scope.conversionKey)
             scope.conversionKey = 1 / INIT_CONVERSION_KEY;
           scope.conLabel1 = scope.isConversionToMeters ? "Feets" : "Meters";
@@ -112,6 +120,7 @@ app.directive("switchConversion", function () {
     },
   };
 });
+<<<<<<< HEAD
 app.directive("handleFocusAndBlur", function ($interval) {
   return {
     link: function (scope, element, attrs) {
@@ -128,3 +137,5 @@ app.directive("handleFocusAndBlur", function ($interval) {
     },
   };
 });
+=======
+>>>>>>> parent of 9332aa5 (k)
