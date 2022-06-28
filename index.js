@@ -1,7 +1,10 @@
 let app = angular.module("myApp", []);
 app.constant("INIT_CONVERSION_KEY", 0.304);
-app.controller("MyTrainingController", function ($scope) {
+app.controller("MyTrainingController", function ($scope, $interval) {
   $scope.myModelVariable = 10;
+  $scope.promise = $interval(function () {
+    $scope.myModelVariable = Math.random();
+  }, 1000);
 });
 app.directive("minVal", function () {
   return {
@@ -52,6 +55,7 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
       scope.isConversionToMeters = attrs.displayFilter === "convertToMeters";
       if (scope.isConversionToMeters)
         scope.$watch("myModelVariable", function (newValue, oldValue) {
+          scope.myModelVariable = Math.round(scope.myModelVariable * 100) / 100;
           if (!scope.conversionKey) scope.conversionKey = INIT_CONVERSION_KEY;
           scope.conLabel1 = scope.isConversionToMeters ? "Meters" : "Feets";
           scope.conLabel2 = scope.isConversionToMeters ? "Feets" : "Meters";
@@ -63,6 +67,7 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
         });
       else
         scope.$watch("myModelVariable", function (newValue, oldValue) {
+          scope.myModelVariable = Math.round(scope.myModelVariable * 100) / 100;
           if (!scope.conversionKey)
             scope.conversionKey = 1 / INIT_CONVERSION_KEY;
           scope.conLabel1 = scope.isConversionToMeters ? "Feets" : "Meters";
@@ -121,6 +126,20 @@ app.directive("switchConversion", function () {
         scope.myViewVariable = modelVal;
         scope.dontConvertToM = true;
         scope.dontConvertToF = true;
+      });
+    },
+  };
+});
+app.directive("handleFocusAndBlur", function ($interval) {
+  return {
+    link: function (scope, element, attrs) {
+      element.bind("focus", function () {
+        $interval.cancel(scope.promise);
+      });
+      element.bind("blur", function () {
+        scope.promise = $interval(function () {
+          scope.myModelVariable = Math.random();
+        }, 1000);
       });
     },
   };
