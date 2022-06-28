@@ -9,14 +9,10 @@
   <body ng-app="myApp">
     <div ng-controller="MyTrainingController">
       <form name="myForm" novalidate>
-        <button
-          ng-click="style"
-          style="border: unset; background-color: unset; font-size: 20pt"
-        >
-          🔃
-        </button>
+        <button switch-conversion>🔃Switch the Conversion🔃</button>
         <br />
-        <label> Enter length in Feet: </label>
+        <br />
+        <label> Enter length in {{conLabel2}}: </label>
         <input
           type="text"
           name="myModelVariable"
@@ -27,27 +23,41 @@
           display-filter="convertToMeters"
           model-filter="convertToFeets"
           to-fixed="2"
+          autofocus
         />
         <br />
-        <label>The length in Meters is: </label>
-        {{myModelVariable|| myModelVariable===0?myModelVariable:"Invalid Input"
-        }}
         <br />
+        <label
+          >The length in {{conLabel1==="Meters"||conLabel1==="Feets"?
+          conLabel1:"Meters"}} is:
+        </label>
+        {{(myForm.myModelVariable.$error.maxVal
+        ||myForm.myModelVariable.$error.minVal
+        ||myForm.myModelVariable.$error.toFixed
+        ||myForm.myModelVariable.$error.allowedChar) ? "Invalid Input" :
+        myViewVariable||
+        ((myViewVariable===0)?myViewVariable:(myModelVariable?myModelVariable*0.304:"Invalid
+        Input"))}}
+        <br />
+        <br />
+
         <span ng-show="myForm.myModelVariable.$error.maxVal" style="color: red"
           >The value can not be more than 200!</span
         >
+
         <span ng-show="myForm.myModelVariable.$error.minVal" style="color: red"
           >The value can not be less than -500!</span
         >
+        <br />
+
         <span
           ng-show="myForm.myModelVariable.$error.allowedChars"
           style="color: red"
           >The value can not contain letters!</span
         >
-        <span
-          ng-show="myForm.myModelVariable.$error.      toFixed
-      "
-          style="color: red"
+        <br />
+
+        <span ng-show="myForm.myModelVariable.$error.toFixed" style="color: red"
           >The value can not contain more than 2 digits after the decimal
           point!</span
         >

@@ -1,5 +1,5 @@
 let app = angular.module("myApp", []);
-app.constant("CONVERSION_KEY", 0.3048);
+app.constant("INIT_CONVERSION_KEY", 0.304);
 app.controller("MyTrainingController", function ($scope) {
   $scope.myModelVariable = 10;
 });
@@ -45,18 +45,21 @@ app.directive("allowedChars", function () {
     },
   };
 });
-app.directive("displayFilter", function ($parse, CONVERSION_KEY) {
+app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
       function parseViewValue(modelValue) {
-        return Math.round(modelValue * CONVERSION_KEY * 100) / 100;
+        conKey = scope.conversionKey || INIT_CONVERSION_KEY;
+        scope.myViewVariable =
+          Math.round(parseFloat(modelValue) * conKey * 100) / 100;
+        return scope.myViewVariable;
       }
       ctrl.$parsers.push(parseViewValue);
     },
   };
 });
-app.directive("modelFilter", function (CONVERSION_KEY) {
+app.directive("modelFilter", function () {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
@@ -79,6 +82,26 @@ app.directive("toFixed", function () {
           viewValue.split(".")[1].length <= attrs.toFixed
         );
       };
+    },
+  };
+});
+app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
+  return {
+    restrict: "A",
+    link: function (scope, ele, attr) {
+      const event = "click";
+      ele.on(event, function () {
+        if (scope.conversionKey) {
+          scope.conversionKey = 1 / scope.conversionKey;
+        } else scope.conversionKey = INIT_CONVERSION_KEY;
+        scope.conLabel1 =
+          scope.conversionKey !== INIT_CONVERSION_KEY ? "Feets" : "Meters";
+        scope.conLabel2 =
+          scope.conversionKey === INIT_CONVERSION_KEY ? "Feets" : "Meters";
+        const modelVal = scope.myModelVariable;
+        scope.myModelVariable = scope.myViewVariable;
+        scope.myViewVariable = modelVal;
+      });
     },
   };
 });
