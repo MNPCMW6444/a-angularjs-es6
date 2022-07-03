@@ -2,10 +2,11 @@ let app = angular.module("myApp", []);
 app.constant("INIT_CONVERSION_KEY", 0.304);
 app.controller("MyTrainingController", function ($scope, $interval) {
   $scope.myModelVariable = 10;
-  $scope.promise = $interval(function () {
+  /* $scope.promise = $interval(function () {
     $scope.myModelVariable = Math.random();
-  }, 1000);
+  }, 1000); */
 });
+
 app.directive("minVal", function () {
   return {
     require: "ngModel",
@@ -48,38 +49,43 @@ app.directive("allowedChars", function () {
     },
   };
 });
-app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
+app.directive("displayFilter", function () {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
-      scope.isConversionToMeters = attrs.displayFilter === "convertToMeters";
+      debugger;
+      ctrl.$$scope.myForm.$$controls[0].$options.$$options.updateOn = "default";
+      ctrl.$$scope.myForm.$$controls[1].$options.$$options.updateOn = "default";
       if (scope.isConversionToMeters)
-        scope.$watch("myModelVariable", function (newValue, oldValue) {
-          if (!scope.conversionKey)
-            scope.conversionKey = scope.isConversionToMeters
-              ? INIT_CONVERSION_KEY
-              : 1 / INIT_CONVERSION_KEY;
-          scope.conLabel1 = scope.isConversionToMeters ? "Meters" : "Feets";
-          scope.conLabel2 = scope.isConversionToMeters ? "Feets" : "Meters";
-          if (scope.dontConvertToM) scope.dontConvertToM = false;
-          else
-            scope.myViewVariable =
-              Math.round(scope.myModelVariable * scope.conversionKey * 100) /
-              100;
+        ctrl.$formatters.push(function (value) {
+          return (
+            Math.round((parseFloat(value) / scope.conversionKey) * 100) / 100
+          );
         });
       else
-        scope.$watch("myModelVariable", function (newValue, oldValue) {
-          if (!scope.conversionKey)
-            scope.conversionKey = scope.isConversionToMeters
-              ? 1 / INIT_CONVERSION_KEY
-              : INIT_CONVERSION_KEY;
-          scope.conLabel1 = scope.isConversionToMeters ? "Feets" : "Meters";
-          scope.conLabel2 = scope.isConversionToMeters ? "Meters" : "Feets";
-          if (scope.dontConvertToF) scope.dontConvertToF = false;
-          else
-            scope.myViewVariable =
-              Math.round(scope.myModelVariable * scope.conversionKey * 100) /
-              100;
+        ctrl.$formatters.push(function (value) {
+          return (
+            Math.round(parseFloat(value) * scope.conversionKey * 100) / 100
+          );
+        });
+    },
+  };
+});
+app.directive("modelFilter", function () {
+  return {
+    require: "ngModel",
+    link: function (scope, elm, attrs, ctrl) {
+      if (scope.isConversionToMeters)
+        ctrl.$parsers.push(function (value) {
+          return (
+            Math.round(parseFloat(value) * scope.conversionKey * 100) / 100
+          );
+        });
+      else
+        ctrl.$parsers.push(function (value) {
+          return (
+            Math.round((parseFloat(value) / scope.conversionKey) * 100) / 100
+          );
         });
     },
   };
@@ -101,24 +107,29 @@ app.directive("toFixed", function () {
 });
 app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
   return {
+    require: "ngModel",
     restrict: "A",
-    link: function (scope, ele, attr) {
+    link: function (scope, ele, attr, ctrl) {
       const event = "click";
+      scope.isConversionToMeters =
+        ctrl.$$attr.displayFilter === "convertToMeters";
+      scope.conversionKey = scope.isConversionToMeters
+        ? 1 / INIT_CONVERSION_KEY
+        : INIT_CONVERSION_KEY;
+      scope.conLabel1 = scope.isConversionToMeters ? "feets" : "meters";
+      scope.conLabel2 = scope.isConversionToMeters ? "meters" : "feets";
       ele.on(event, function () {
         scope.isConversionToMeters = !scope.isConversionToMeters;
         scope.conversionKey = scope.isConversionToMeters
-          ? INIT_CONVERSION_KEY
-          : 1 / INIT_CONVERSION_KEY;
-        const modelVal = scope.myModelVariable;
-        scope.myModelVariable = scope.myViewVariable;
-        scope.myViewVariable = modelVal;
-        scope.dontConvertToM = true;
-        scope.dontConvertToF = true;
+          ? 1 / INIT_CONVERSION_KEY
+          : INIT_CONVERSION_KEY;
+        scope.conLabel1 = scope.isConversionToMeters ? "feets" : "meters";
+        scope.conLabel2 = scope.isConversionToMeters ? "meters" : "feets";
       });
     },
   };
 });
-app.directive("handleFocusAndBlur", function ($interval) {
+/* app.directive("handleFocusAndBlur", function ($interval) {
   return {
     link: function (scope, element, attrs) {
       element.bind("focus", function () {
@@ -132,3 +143,4 @@ app.directive("handleFocusAndBlur", function ($interval) {
     },
   };
 });
+ */

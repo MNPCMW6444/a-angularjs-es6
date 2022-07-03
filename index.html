@@ -9,10 +9,12 @@
   <body ng-app="myApp">
     <div ng-controller="MyTrainingController">
       <form name="myForm" novalidate>
-        <button switch-conversion>🔃Switch the Conversion🔃</button>
+        <button ng-model="myModelVariable" switch-conversion>
+          🔃Switch the Conversion🔃
+        </button>
         <br />
         <br />
-        <label> Enter length in {{conLabel2}}: </label>
+        <label> Enter length in {{conLabel1}}: </label>
         <input
           type="text"
           name="myModelVariable"
@@ -21,14 +23,14 @@
           max-val="200"
           allowed-chars="[0-9\-\-.]"
           display-filter="convertToMeters"
-          model-filter="convertToFeets"
+          model-filter="convertToMeters"
           to-fixed="2"
           handle-focus-and-blur
         />
         <br />
         <br />
-        <label>The length in {{conLabel1}} is: </label>
-        {{myViewVariable || "Invalid Value"}}
+        <label>The length in {{conLabel2}} is: </label>
+        {{myModelVariable || "Invalid Value"}}
         <br />
         <br />
 
