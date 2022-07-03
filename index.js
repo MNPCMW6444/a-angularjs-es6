@@ -1,10 +1,10 @@
 let app = angular.module("myApp", []);
-app.constant("INIT_CONVERSION_KEY", 0.304);
+app.constant("INIT_CONVERSION_KEY", 3.2894);
 app.controller("MyTrainingController", function ($scope, $interval) {
   $scope.myModelVariable = 10;
-  $scope.promise = $interval(function () {
+  /*  $scope.promise = $interval(function () {
     $scope.myModelVariable = Math.random();
-  }, 1000);
+  }, 1000); */
 });
 app.directive("minVal", function () {
   return {
@@ -52,35 +52,41 @@ app.directive("displayFilter", function (INIT_CONVERSION_KEY) {
   return {
     require: "ngModel",
     link: function (scope, elm, attrs, ctrl) {
-      scope.isConversionToMeters = attrs.displayFilter === "convertToMeters";
-      if (scope.isConversionToMeters)
-        scope.$watch("myModelVariable", function (newValue, oldValue) {
-          if (!scope.conversionKey)
-            scope.conversionKey = scope.isConversionToMeters
-              ? INIT_CONVERSION_KEY
-              : 1 / INIT_CONVERSION_KEY;
-          scope.conLabel1 = scope.isConversionToMeters ? "Meters" : "Feets";
-          scope.conLabel2 = scope.isConversionToMeters ? "Feets" : "Meters";
-          if (scope.dontConvertToM) scope.dontConvertToM = false;
-          else
-            scope.myViewVariable =
-              Math.round(scope.myModelVariable * scope.conversionKey * 100) /
-              100;
+      if (attrs.displayFilter === "convertToMeters") {
+        scope.conLabel2 = "Meters";
+        ctrl.$formatters.push((value) => {
+          return Math.round(value * INIT_CONVERSION_KEY * 100) / 100;
         });
-      else
-        scope.$watch("myModelVariable", function (newValue, oldValue) {
-          if (!scope.conversionKey)
-            scope.conversionKey = scope.isConversionToMeters
-              ? 1 / INIT_CONVERSION_KEY
-              : INIT_CONVERSION_KEY;
-          scope.conLabel1 = scope.isConversionToMeters ? "Feets" : "Meters";
-          scope.conLabel2 = scope.isConversionToMeters ? "Meters" : "Feets";
-          if (scope.dontConvertToF) scope.dontConvertToF = false;
-          else
-            scope.myViewVariable =
-              Math.round(scope.myModelVariable * scope.conversionKey * 100) /
-              100;
+      }
+      if (attrs.displayFilter === "convertToFeets") {
+        scope.conLabel2 = "Feets";
+        ctrl.$formatters.push((value) => {
+          return Math.round((value / INIT_CONVERSION_KEY) * 100) / 100;
         });
+      }
+    },
+  };
+});
+app.directive("modelFilter", function (INIT_CONVERSION_KEY) {
+  return {
+    require: "ngModel",
+    link: function (scope, elm, attrs, ctrl) {
+      if (attrs.modelFilter === "convertToFeets") {
+        scope.conLabel1 = "Feets";
+        ctrl.$parsers.push((value) => {
+          return Math.round((value / INIT_CONVERSION_KEY) * 100) / 100;
+        });
+        scope.myModelVariable =
+          Math.round((scope.myModelVariable / INIT_CONVERSION_KEY) * 100) / 100;
+      }
+      if (attrs.modelFilter === "convertToMeters") {
+        scope.conLabel1 = "Meters";
+        ctrl.$parsers.push((value) => {
+          return Math.round(value * INIT_CONVERSION_KEY * 100) / 100;
+        });
+        scope.myModelVariable =
+          Math.round(scope.myModelVariable * INIT_CONVERSION_KEY * 100) / 100;
+      }
     },
   };
 });
@@ -99,26 +105,25 @@ app.directive("toFixed", function () {
     },
   };
 });
-app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
+/* app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
   return {
+    require: "ngModel",
     restrict: "A",
-    link: function (scope, ele, attr) {
+    link: function (scope, ele, attr, ctrl) {
+      scope.conversionKey = scope.isConversionToMeters
+        ? INIT_CONVERSION_KEY
+        : 1 / INIT_CONVERSION_KEY;
       const event = "click";
       ele.on(event, function () {
         scope.isConversionToMeters = !scope.isConversionToMeters;
         scope.conversionKey = scope.isConversionToMeters
           ? INIT_CONVERSION_KEY
           : 1 / INIT_CONVERSION_KEY;
-        const modelVal = scope.myModelVariable;
-        scope.myModelVariable = scope.myViewVariable;
-        scope.myViewVariable = modelVal;
-        scope.dontConvertToM = true;
-        scope.dontConvertToF = true;
       });
     },
   };
-});
-app.directive("handleFocusAndBlur", function ($interval) {
+}); */
+/* app.directive("handleFocusAndBlur", function ($interval) {
   return {
     link: function (scope, element, attrs) {
       element.bind("focus", function () {
@@ -132,3 +137,4 @@ app.directive("handleFocusAndBlur", function ($interval) {
     },
   };
 });
+ */
