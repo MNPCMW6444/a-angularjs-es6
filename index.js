@@ -105,11 +105,12 @@ app.directive("toFixed", function () {
     },
   };
 });
-/* app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
+app.directive("switchConversion", function (INIT_CONVERSION_KEY) {
   return {
     require: "ngModel",
     restrict: "A",
     link: function (scope, ele, attr, ctrl) {
+      console.log(attr);
       scope.conversionKey = scope.isConversionToMeters
         ? INIT_CONVERSION_KEY
         : 1 / INIT_CONVERSION_KEY;
@@ -122,7 +123,7 @@ app.directive("toFixed", function () {
       });
     },
   };
-}); */
+});
 /* app.directive("handleFocusAndBlur", function ($interval) {
   return {
     link: function (scope, element, attrs) {
